@@ -15,6 +15,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zippopotam/data/models/zip_response.dart';
 
 class ZipCard extends StatelessWidget {
@@ -22,37 +23,54 @@ class ZipCard extends StatelessWidget {
 
   const ZipCard({super.key, required this.info});
 
+  Future<void> _launchMaps(BuildContext context) async {
+    if (info.latitude == null ||
+        info.longitude == null ||
+        info.latitude!.isEmpty ||
+        info.longitude!.isEmpty) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Coordenades no disponibles')),
+      );
+      return;
+    }
+
+    final uri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=${info.latitude},${info.longitude}',
+    );
+
+    if (!await launchUrl(uri)) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No s\'ha pogut obrir Google Maps')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Accedim al tema definit globalment.
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
-
-      // Usem el nou color recomanat per a superfícies elevades com les targetes.
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              info.placeName,
-              // Apliquem un estil de text predefinit del nostre TextTheme.
-              // Això assegura consistència i facilita canvis globals de font/mida.
-              style: textTheme.titleLarge?.copyWith(
-                color: colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${info.state} - CP: ${info.postCode}',
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16.0),
+        title: Text(
+          info.placeName,
+          style: textTheme.titleLarge?.copyWith(
+            color: colorScheme.onSurface,
+          ),
+        ),
+        subtitle: Text(
+          '${info.state} - CP: ${info.postCode}',
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.location_on_outlined),
+          onPressed: () => _launchMaps(context),
         ),
       ),
     );

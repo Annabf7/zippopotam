@@ -19,11 +19,15 @@ class ZipInfo {
   final String placeName;
   final String state;
   final String postCode;
+  final String? latitude;
+  final String? longitude;
 
   ZipInfo({
     required this.placeName,
     required this.state,
     required this.postCode,
+    this.latitude,
+    this.longitude,
   });
 
   // Aquest és un "constructor factory". És un mètode que crea una instància de la classe.
@@ -41,6 +45,8 @@ class ZipInfo {
       // Aquesta lògica es gestiona millor al repository, que unifica el model.
       // Aquí assumim que el camp ja ve normalitzat com 'postCode'.
       postCode: json['postCode'] ?? json['post code'] ?? 'N/A',
+      latitude: json['latitude'],
+      longitude: json['longitude'],
     );
   }
 }
