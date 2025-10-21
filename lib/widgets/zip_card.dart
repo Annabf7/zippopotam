@@ -4,7 +4,7 @@
 /// Un widget que mostra la informació d'un únic resultat (un objecte ZipInfo)
 /// en un format de targeta.
 ///
-/// PER QUÈ EXISTEIX:
+/// PER QUÈ EXISTIX:
 /// Per representar visualment un element de la llista de resultats. És un widget
 /// "tonto" (stateless) que només es preocupa de com mostrar les dades que rep,
 /// fent-lo altament reutilitzable i previsible.
@@ -58,12 +58,12 @@ class ZipCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(
           info.placeName,
-          style: textTheme.titleLarge?.copyWith(
-            color: colorScheme.onSurface,
-          ),
+          style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
         ),
         subtitle: Text(
-          '${info.state} - CP: ${info.postCode}',
+          // CORRECCIÓ FINAL: Com que la dada 'state' de l'API de vegades arriba com 'N/A',
+          // l'eliminem per tenir una interfície més neta i mostrem només el codi postal.
+          'CP: ${info.postCode}',
           style: textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
           ),
